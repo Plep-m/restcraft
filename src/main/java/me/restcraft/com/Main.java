@@ -1,41 +1,32 @@
 package me.restcraft.com;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import me.restcraft.com.commands.TimeCommand;
+import me.restcraft.com.managers.BlockManager;
+import me.restcraft.com.managers.ChunkManager;
+import me.restcraft.com.managers.CommandsManager;
+import me.restcraft.com.managers.PlayerManager;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.entity.GameMode;
-import net.minestom.server.entity.Player;
-import net.minestom.server.event.GlobalEventHandler;
-import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
-import net.minestom.server.instance.*;
-import net.minestom.server.instance.batch.ChunkBatch;
-import net.minestom.server.instance.block.Block;
-import net.minestom.server.coordinate.Pos;
-import net.minestom.server.world.biomes.Biome;
-
-import java.util.Arrays;
-import java.util.List;
+import net.minestom.server.instance.InstanceContainer;
 
 public class Main {
-
     public static void main(String[] args) {
-        // Initialization
         MinecraftServer minecraftServer = MinecraftServer.init();
-        InstanceManager instanceManager = MinecraftServer.getInstanceManager();
-        // Create the instance
-        InstanceContainer instanceContainer = instanceManager.createInstanceContainer();
-        // Set the ChunkGenerator
-        instanceContainer.setGenerator(unit ->
-                unit.modifier().fillHeight(0, 40, Block.STONE));
-        // Add an event callback to specify the spawning instance (and the spawn position)
-        GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
-        globalEventHandler.addListener(AsyncPlayerConfigurationEvent.class, event -> {
-            final Player player = event.getPlayer();
-            event.setSpawningInstance(instanceContainer);
-            player.setRespawnPoint(new Pos(0, 42, 0));
-            player.setGameMode(GameMode.CREATIVE);
-        });
-        // Start the server on port 25565
+
+        InstanceContainer instanceContainer = InstanceCreator.createInstance();
+
+        PlayerManager playerManager = new PlayerManager(instanceContainer);
+        BlockManager blockManager = new BlockManager(instanceContainer);
+        ChunkManager chunkManager = new ChunkManager(instanceContainer);
+
+        // Set up HTTP routes
+        HttpRoutes httpRoutes = new HttpRoutes(playerManager, blockManager, chunkManager);
+        httpRoutes.setupRoutes();
+
+        CommandsManager commandManager = new CommandsManager();
+        commandManager.addCommand(new TimeCommand(instanceContainer));
+        // commandManager.addCommand(new CustomCommand(playerManager)); // Example of another command using a dependency
+        commandManager.registerCommands();
+
         minecraftServer.start("0.0.0.0", 25565);
     }
 }

@@ -1,15 +1,14 @@
 package me.restcraft.com.managers;
 
 import me.restcraft.com.classes.BlockData;
+import me.restcraft.com.interfaces.Manager;
 import me.restcraft.com.parsers.PlaceBody;
 import me.restcraft.com.classes.Position;
 import me.restcraft.com.classes.Structure;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
 
-
-
-public class BlockManager {
+public class BlockManager implements Manager {
     private final InstanceContainer instanceContainer;
 
     public BlockManager(InstanceContainer instanceContainer) {

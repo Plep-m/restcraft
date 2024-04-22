@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password   # Root password
+      MYSQL_DATABASE: restcraft_db          # Default database
+      MYSQL_USER: restcraft_rw            # User to create
+      MYSQL_PASSWORD: restcraft_rw   # Password for the user
+    ports:
+      - "3306:3306"                        # Expose port 3306
+    volumes:
+      - mariadb_data:/var/lib/mysql        # Persistent storage for MariaDB
+
+volumes:
+  mariadb_data:
+    driver: local                          # Using local storage for persistence

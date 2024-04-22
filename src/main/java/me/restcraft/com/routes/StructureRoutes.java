@@ -1,12 +1,11 @@
 package me.restcraft.com.routes;
 
-import me.restcraft.com.annotations.Route;
-import me.restcraft.com.annotations.UseBlockManager;
-import me.restcraft.com.annotations.UseGson;
+import spark.Spark;
 import com.google.gson.Gson;
+
+import me.restcraft.com.annotations.*;
 import me.restcraft.com.classes.Structure;
 import me.restcraft.com.interfaces.SetupRoutes;
-import spark.Spark;
 import me.restcraft.com.managers.BlockManager;
 
 @Route

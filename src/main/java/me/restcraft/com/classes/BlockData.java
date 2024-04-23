@@ -6,8 +6,23 @@ public class BlockData {
     @SerializedName("blockName")
     public String name;
 
-    @SerializedName("facing") // New property for direction
+    @SerializedName("facing")
     public String facing;
+
+    @SerializedName("power")
+    public int power;
+
+    @SerializedName("west")
+    public String west;
+
+    @SerializedName("east")
+    public String east;
+
+    @SerializedName("north")
+    public String north;
+
+    @SerializedName("south")
+    public String south;
 
     @SerializedName("relativePosition")
     public Position position;

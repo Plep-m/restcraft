@@ -1,7 +1,8 @@
 package me.restcraft.com;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import me.restcraft.com.interfaces.Manager;
-import net.minestom.server.instance.InstanceContainer;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,9 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Database implements Manager {
+    static Dotenv dotenv = Dotenv.load();
     private static final String DB_URL = "jdbc:mariadb://localhost:3306/restcraft_db";
     private static final String USER = "restcraft_rw";
-    private static final String PASS = "restcraft_rw";
+    private static final String PASS = dotenv.get("DB_PASSWORD");
 
 
     private Connection connect() throws SQLException {
@@ -20,9 +22,10 @@ public class Database implements Manager {
     }
 
     public ResultSet query(String sql) throws SQLException {
-        Connection connection = connect();
-        Statement statement = connection.createStatement();
-        return statement.executeQuery(sql);
+        try (Connection connection = connect();
+             Statement statement = connection.createStatement()) {
+            return statement.executeQuery(sql);
+        }
     }
 
     public List<Map<String, Object>> resultSetToList(ResultSet resultSet) throws SQLException {

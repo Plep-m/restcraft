@@ -2,6 +2,9 @@ package me.restcraft.com.managers;
 
 import lombok.Getter;
 import me.restcraft.com.Database;
+import me.restcraft.com.annotations.UseInstanceContainer;
+import me.restcraft.com.annotations.UseRedstoneManager;
+import me.restcraft.com.classes.Position;
 import me.restcraft.com.interfaces.Manager;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.GameMode;
@@ -12,21 +15,25 @@ import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.coordinate.Pos;
+import net.minestom.server.instance.block.Block;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class PlayerManager implements Manager {
     @Getter
     private final List<Player> players = new ArrayList<>();
     private final InstanceContainer instanceContainer;
     private final Database database = new Database();
+    private final RedstoneManager redstoneManager;
+    Logger logger = Logger.getLogger(PlayerManager.class.getName());
 
-
-    public PlayerManager(InstanceContainer instanceContainer) {
+    public PlayerManager(@UseInstanceContainer InstanceContainer instanceContainer, @UseRedstoneManager RedstoneManager redstoneManager) {
         this.instanceContainer = instanceContainer;
+        this.redstoneManager = redstoneManager;
         setGlobalEventHandlers();
     }
 
@@ -57,7 +64,7 @@ public class PlayerManager implements Manager {
                 player.kick("You are not whitelisted");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Error while checking whitelist: " + e.getMessage());
         }
 
     }
@@ -66,7 +73,6 @@ public class PlayerManager implements Manager {
         // Player not "Plep_fr"
         if (!event.getPlayer().getUsername().equals("Plep_fr")) {
             event.setCancelled(true);
-            return;
         }
     }
 
@@ -74,7 +80,12 @@ public class PlayerManager implements Manager {
         // Player not "Plep_fr"
         if (!event.getPlayer().getUsername().equals("Plep_fr")) {
             event.setCancelled(true);
-            return;
+        } else {
+            Block block = event.getBlock();
+            if (block == Block.REDSTONE_WIRE) {
+                Position position = new Position(event.getBlockPosition().blockX(), event.getBlockPosition().blockY(), event.getBlockPosition().blockZ());
+                redstoneManager.addRedstoneWire(position, block);
+            }
         }
     }
 

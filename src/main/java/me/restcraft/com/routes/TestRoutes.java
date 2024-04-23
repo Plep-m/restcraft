@@ -13,11 +13,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Route
 public class TestRoutes implements SetupRoutes {
     private final Gson gson;
     private final Database databaseManager;
+    Logger logger = Logger.getLogger(TestRoutes.class.getName());
 
     public TestRoutes(@UseGson Gson gson, @UseDatabase Database databaseManager) {
         this.gson = gson;
@@ -50,7 +52,7 @@ public class TestRoutes implements SetupRoutes {
                     try {
                         resultSet.close(); // Close ResultSet to avoid resource leaks
                     } catch (SQLException ex) {
-                        System.err.println("Error closing ResultSet: " + ex.getMessage());
+                        logger.severe("Could not close ResultSet: " + ex.getMessage());
                     }
                 }
             }
